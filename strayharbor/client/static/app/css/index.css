@@ -1,0 +1,112 @@
+html {
+  min-height: 100%;
+  /* Required for sticky footer */
+  position: relative;
+  /* Required for sticky footer */
+}
+
+body {
+  background-color: #eeeeee;
+  color: #444;
+  font-family: 'Lora', serif;
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 100px;
+  /* Sticky footer height */
+}
+
+.media,
+.media-body {
+  overflow: visible;
+}
+
+.media-body {
+  position: relative;
+}
+
+date-entry {
+  display: block;
+  margin-bottom: 60px;
+}
+
+.date {
+  background-color: #444;
+  height: 1px;
+  margin: 25px 0 30px 0;
+  text-align: center;
+}
+
+.display-date {
+  background-color: #eeeeee;
+  font-size: 25px;
+  padding: 0px 10px;
+  position: relative;
+  top: -20px;
+}
+
+.like-entry {
+  margin-bottom: 40px;
+}
+
+.like-title {
+  display: block;
+  font-size: 22px;
+  padding-bottom: 29px;
+}
+
+.like-title:hover,
+.like-title:active {
+  text-decoration: none;
+}
+
+.like-comments,
+.like-comments:hover,
+.like-comments:focus,
+.like-comments:active {
+  color: #888;
+}
+
+.like-subreddit {
+  border-radius: 4px;
+  padding: 3px 6px;
+}
+
+.like-subreddit,
+.like-subreddit:hover,
+.like-subreddit:focus,
+.like-subreddit:active {
+  color: #fff;
+}
+
+.bottom-links {
+  bottom: -5px;
+  position: absolute;
+  width: 100%;
+}
+
+.sticky-footer {
+  background-color: #222222;
+  bottom: 0;
+  height: 100px;
+  position: absolute;
+  width: 100%;
+}
+
+.footer-links {
+  margin-top: 15px;
+}
+
+.footer-links a {
+  color: #fff;
+}
+
+.footer-links a:hover,
+.footer-links a:focus,
+.footer-links a:active {
+  color: #337ab7;
+  text-decoration: none;
+}
+
+.footer-links a:not(:first-child) {
+  margin-left: 30px;
+}
