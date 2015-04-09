@@ -4,7 +4,7 @@
 from flask.ext.script import Manager
 
 # Our libs
-from strayharbor import create_app
+from strayharbor.app import create_app
 from strayharbor.settings import DevConfig
 
 def main():
