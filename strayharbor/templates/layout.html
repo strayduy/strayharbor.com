@@ -13,6 +13,10 @@
         <link href="/static/vendor/css/vendor.min.css" rel="stylesheet">
         {% block css %}
         {% endblock %}
+
+        {% block analytics_tracking %}
+            {% include 'includes/google-analytics-tracking.html' %}
+        {% endblock %}
     </head>
     <body>
         {% block content %}
