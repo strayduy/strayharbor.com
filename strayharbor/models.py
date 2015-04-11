@@ -60,10 +60,20 @@ class User(MongoDocument):
                               key=lambda entry: entry['date'],
                               reverse=True)
 
-        # Pagination
+        paginated_date_entries = self.__class__.paginate_date_entries(date_entries,
+                                                                      offset,
+                                                                      limit)
+
+        max_pages = int(math.ceil(len(self.get('likes', [])) / float(limit)))
+
+        return {'date_entries': paginated_date_entries, 'max_pages': max_pages}
+
+    @staticmethod
+    def paginate_date_entries(date_entries, offset, limit):
         paginated_date_entries = []
         like_index = 0
         max_index = offset + limit - 1
+
         for date_entry in date_entries:
             paginated_likes = []
             for like in date_entry['likes']:
@@ -80,9 +90,7 @@ class User(MongoDocument):
             if like_index > max_index:
                 break
 
-        max_pages = int(math.ceil(len(self.get('likes', [])) / float(limit)))
-
-        return {'date_entries': paginated_date_entries, 'max_pages': max_pages}
+        return paginated_date_entries
 
 def convert_utc_to_local(utc_date):
     from_zone = tz.gettz('UTC')
