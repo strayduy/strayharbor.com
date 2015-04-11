@@ -3,12 +3,13 @@ from collections import defaultdict
 from datetime import datetime
 from dateutil import tz
 import math
+import os
 
 # Our libs
 from .database import Database
 
 # Constants
-LOCAL_TIMEZONE = 'America/Los_Angeles'
+LOCAL_TIMEZONE = os.getenv('TZ', 'America/Los_Angeles')
 
 class MongoDocument(object):
     database = Database
