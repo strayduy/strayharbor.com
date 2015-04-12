@@ -8,6 +8,7 @@ gunicorn==19.3.0
 itsdangerous==0.24
 pymongo==2.8
 python-dateutil==2.4.2
+repoze.lru==0.6
 requests==2.5.3
 six==1.9.0
 wsgiref==0.1.2
