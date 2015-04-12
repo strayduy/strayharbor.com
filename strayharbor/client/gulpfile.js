@@ -1,6 +1,7 @@
 /* jshint node: true */
 'use strict';
 
+var babelify            = require('babelify');
 var browser_sync        = require('browser-sync');
 var browserify          = require('browserify');
 var concat              = require('gulp-concat');
@@ -100,6 +101,7 @@ function bundle_index(watch) {
 
     function bundle() {
         return bundler
+            .transform(babelify)
             .bundle()
             .pipe(vinyl_source_stream('index.bundle.js'))
             .pipe(gulp.dest(DEST))
