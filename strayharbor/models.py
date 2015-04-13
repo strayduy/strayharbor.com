@@ -45,15 +45,18 @@ class User(MongoDocument):
     DATE_FORMAT = '%Y-%m-%d'
     DEFAULT_ENTRIES_LIMIT = 25
 
-    def get_likes(self, offset=0, limit=DEFAULT_ENTRIES_LIMIT):
+    def get_likes(self, offset=0, limit=DEFAULT_ENTRIES_LIMIT, subreddit=None):
         likes_by_date = defaultdict(list)
+        num_likes = 0
 
         for like in self.get('likes', []):
             utc_date = datetime.utcfromtimestamp(like['created_utc'])
             local_date = convert_utc_to_local(utc_date)
             local_date = local_date.strftime(self.__class__.DATE_FORMAT)
 
-            likes_by_date[local_date].append(like)
+            if not subreddit or like['subreddit'] == subreddit:
+                likes_by_date[local_date].append(like)
+                num_likes += 1
 
         date_entries = sorted([{'date': local_date, 'likes': likes}
                                for local_date, likes
@@ -65,7 +68,7 @@ class User(MongoDocument):
                                                                       offset,
                                                                       limit)
 
-        max_pages = int(math.ceil(len(self.get('likes', [])) / float(limit)))
+        max_pages = int(math.ceil(num_likes / float(limit)))
 
         return {'date_entries': paginated_date_entries, 'max_pages': max_pages}
 

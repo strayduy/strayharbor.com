@@ -19,8 +19,13 @@ class LikesPage {
         this.max_pages = ko.observable(1);
         this.is_loaded = ko.observable(false);
 
-        this.page_regex = /^\/page\/(\d+)\/?/gi;
+        this.base_url = ko.observable('');
         this.init_request_params = {};
+
+        this.page_regex = ko.pureComputed(() => {
+            var base_url = this.base_url();
+            return new RegExp('^' + base_url + '\/page\/(\\\d+)\/?', 'gi');
+        });
 
         this.has_prev_page = ko.pureComputed(() => {
             return this.page() > 1;
@@ -32,27 +37,29 @@ class LikesPage {
 
         this.prev_page_url = ko.pureComputed(() => {
             let page = this.page();
+            let base_url = this.base_url();
 
             if (!this.has_prev_page()) {
                 return '#';
             }
 
-            return '/page/' + (page - 1) + '/';
+            return base_url + '/page/' + (page - 1) + '/';
         });
 
         this.next_page_url = ko.pureComputed(() => {
             let page = this.page();
+            let base_url = this.base_url();
 
             if (!this.has_next_page()) {
                 return '#';
             }
 
-            return '/page/' + (page + 1) + '/';
+            return base_url + '/page/' + (page + 1) + '/';
         });
     }
 
     init() {
-        let match = this.page_regex.exec(window.location.pathname);
+        let match = this.page_regex().exec(window.location.pathname);
         this.page(match ? parseInt(match[1]) : 1);
 
         let params = _.assign({}, this.init_request_params, {page: this.page()});
@@ -69,7 +76,7 @@ class LikesPage {
                         like.permalink = '//www.reddit.com' + like.permalink;
                         like.comments_text = like.num_comments + ' comments';
                         like.subreddit_text = '/r/' + like.subreddit;
-                        like.subreddit_url = '//www.reddit.com/r/' + like.subreddit;
+                        like.subreddit_url = '/r/' + like.subreddit;
                         like.subreddit_color = '#' + string_to_color.getColor(like.subreddit);
                     });
                 });

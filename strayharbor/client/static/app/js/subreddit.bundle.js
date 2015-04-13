@@ -5,6 +5,8 @@
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
+var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
 
 // External libs
@@ -13,23 +15,28 @@ var ko = (window.ko);
 // Our libs
 var LikesPage = require('./likes-page');
 
-var IndexPage = (function (_LikesPage) {
-  function IndexPage() {
-    _classCallCheck(this, IndexPage);
+var SubredditPage = (function (_LikesPage) {
+    function SubredditPage() {
+        _classCallCheck(this, SubredditPage);
 
-    if (_LikesPage != null) {
-      _LikesPage.apply(this, arguments);
+        _get(Object.getPrototypeOf(SubredditPage.prototype), 'constructor', this).call(this);
+
+        var subreddit_regex = /^\/r\/([^\/]+)(\/page\/(\d+)\/?)?/gi;
+        var match = subreddit_regex.exec(window.location.pathname);
+        this.subreddit = match[1];
+        this.base_url('/r/' + this.subreddit);
+
+        this.init_request_params = { subreddit: this.subreddit };
     }
-  }
 
-  _inherits(IndexPage, _LikesPage);
+    _inherits(SubredditPage, _LikesPage);
 
-  return IndexPage;
+    return SubredditPage;
 })(LikesPage);
 
-var index_page = new IndexPage();
-ko.applyBindings(index_page);
-index_page.init();
+var subreddit_page = new SubredditPage();
+ko.applyBindings(subreddit_page);
+subreddit_page.init();
 
 },{"./likes-page":6}],2:[function(require,module,exports){
 (function (global){

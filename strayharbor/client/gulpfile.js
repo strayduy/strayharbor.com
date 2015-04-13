@@ -17,9 +17,11 @@ var vinyl_source_stream = require('vinyl-source-stream');
 var watchify            = require('watchify');
 
 gulp.task('default', ['build-all']);
-gulp.task('build-all', ['vendor', 'index']);
+gulp.task('build-all', ['vendor', 'index', 'subreddit']);
 gulp.task('vendor', ['vendor-js', 'vendor-css', 'vendor-fonts']);
+gulp.task('app', ['index', 'subreddit']);
 gulp.task('index', ['index-js', 'index-css']);
+gulp.task('subreddit', ['subreddit-js']);
 
 gulp.task('browser-sync', function() {
     browser_sync({
@@ -72,7 +74,7 @@ gulp.task('vendor-fonts', function() {
 });
 
 gulp.task('index-js', function() {
-    return bundle_index(false);
+    return bundle_js('./src/index.js', 'index.bundle.js', false);
 });
 
 gulp.task('index-css', function() {
@@ -92,18 +94,28 @@ gulp.task('index-css', function() {
 gulp.task('watch-index', ['browser-sync'], function() {
     gulp.watch(['./src/**/*.css'], ['index-css', browser_sync.reload]);
     gulp.watch(['../templates/*.html'], [browser_sync.reload]);
-    bundle_index(true);
+    bundle_js('.src/index.js', 'index.bundle.js', true);
 });
 
-function bundle_index(watch) {
-    var bundler = browserify('./src/index.js');
+gulp.task('subreddit-js', function() {
+    return bundle_js('./src/subreddit.js', 'subreddit.bundle.js', false);
+});
+
+gulp.task('watch-subreddit', ['browser-sync'], function() {
+    gulp.watch(['./src/**/*.css'], ['index-css', browser_sync.reload]);
+    gulp.watch(['../templates/*.html'], [browser_sync.reload]);
+    bundle_js('.src/subreddit.js', 'subreddit.bundle.js', true);
+});
+
+function bundle_js(src_file, dest_file, watch) {
+    var bundler = browserify(src_file);
     var DEST = './static/app/js';
 
     function bundle() {
         return bundler
             .transform(babelify)
             .bundle()
-            .pipe(vinyl_source_stream('index.bundle.js'))
+            .pipe(vinyl_source_stream(dest_file))
             .pipe(gulp.dest(DEST))
             .pipe(streamify(uglify()))
             .pipe(rename({extname: '.min.js'}))

@@ -26,11 +26,17 @@ cache = ExpiringLRUCache(MAX_CACHE_ENTRIES, default_timeout=CACHE_TIMEOUT_IN_SEC
 def index(page=1):
     return render_template('index.html')
 
+@blueprint.route('/r/<subreddit>/')
+@blueprint.route('/r/<subreddit>/page/<int:page>/')
+def subreddit(subreddit, page=1):
+    return render_template('subreddit.html', subreddit=subreddit)
+
 @blueprint.route('/likes.json')
 def likes_json():
+    subreddit = request.args.get('subreddit', '')
     page = int(request.args.get('page', 1))
 
-    cache_key = '/likes.json?page=%d' % (page)
+    cache_key = '/likes.json?subreddit=%s&page=%d' % (subreddit, page)
     cache_entry = cache.get(cache_key)
 
     if cache_entry:
@@ -38,7 +44,7 @@ def likes_json():
     else:
         offset = ENTRIES_PER_PAGE * (page - 1)
         user = User.get_by_id(current_app.config['REDDIT_USERNAME'])
-        res = user.get_likes(offset=offset, limit=ENTRIES_PER_PAGE)
+        res = user.get_likes(offset=offset, limit=ENTRIES_PER_PAGE, subreddit=subreddit)
         cache.put(cache_key, res)
 
     return jsonify(**res)
