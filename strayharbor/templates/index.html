@@ -2,7 +2,7 @@
 
 {% block css %}
     <link href='http://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
-    <link href="/static/app/css/index.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='app/css/index.min.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -41,5 +41,5 @@
 {% endblock %}
 
 {% block js %}
-    <script src="/static/app/js/index.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='app/js/index.bundle.min.js') }}"></script>
 {% endblock %}

@@ -10,7 +10,7 @@
 
         <title>{% block document_title %}strayharbor - a list of neat things I found on the internet{% endblock %}</title>
 
-        <link href="/static/vendor/css/vendor.min.css" rel="stylesheet">
+        <link href="{{ url_for('static', filename='vendor/css/vendor.min.css') }}" rel="stylesheet">
         {% block css %}
         {% endblock %}
 
@@ -22,7 +22,7 @@
         {% block content %}
         {% endblock %}
 
-        <script src="/static/vendor/js/vendor.min.js"></script>
+        <script src="{{ url_for('static', filename='vendor/js/vendor.min.js') }}"></script>
         {% block js %}
         {% endblock %}
     </body>

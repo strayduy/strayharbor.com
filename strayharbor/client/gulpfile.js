@@ -10,6 +10,7 @@ var gulp                = require('gulp');
 var gutil               = require('gulp-util');
 var minify_css          = require('gulp-minify-css');
 var rename              = require('gulp-rename');
+var replace             = require('gulp-replace');
 var streamify           = require('gulp-streamify');
 var stringify           = require('stringify');
 var uglify              = require('gulp-uglify');
@@ -56,6 +57,7 @@ gulp.task('vendor-css', function() {
 
     return gulp.src(vendor_css)
         .pipe(concat_css('vendor.css', {rebaseUrls: false}))
+        .pipe(replace('../fonts/', '/static/vendor/fonts/'))
         .pipe(gulp.dest(DEST))
         .pipe(minify_css({rebase: false}))
         .pipe(rename({extname: '.min.css'}))

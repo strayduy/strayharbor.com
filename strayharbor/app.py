@@ -1,5 +1,6 @@
 # Third party libs
 from flask import Flask
+from flask.ext import cache_bust
 
 # Our libs
 from .blueprints import root
@@ -22,6 +23,8 @@ def register_extensions(app):
         'password': app.config.get('USER_DB_PASSWORD', ''),
     }
     Database.connect(**db_config)
+
+    cache_bust.init_cache_busting(app)
 
 def register_blueprints(app):
     app.register_blueprint(root.blueprint)
