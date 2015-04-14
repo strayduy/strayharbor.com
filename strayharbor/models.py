@@ -50,12 +50,14 @@ class User(MongoDocument):
         num_likes = 0
 
         for like in self.get('likes', []):
-            utc_date = datetime.utcfromtimestamp(like['created_utc'])
+            like = Like(like)
+
+            utc_date = datetime.utcfromtimestamp(like.created_utc)
             local_date = convert_utc_to_local(utc_date)
             local_date = local_date.strftime(self.__class__.DATE_FORMAT)
 
-            if not subreddit or like['subreddit'] == subreddit:
-                likes_by_date[local_date].append(like)
+            if not subreddit or like.subreddit == subreddit:
+                likes_by_date[local_date].append(like.serialize())
                 num_likes += 1
 
         date_entries = sorted([{'date': local_date, 'likes': likes}
@@ -95,6 +97,29 @@ class User(MongoDocument):
                 break
 
         return paginated_date_entries
+
+class Like(object):
+    FIELDS = [
+        'created_utc',
+        'num_comments',
+        'permalink',
+        'subreddit',
+        'thumbnail',
+        'title',
+        'url',
+    ]
+
+    def __init__(self, data):
+        for field in self.__class__.FIELDS:
+            setattr(self, field, data[field])
+
+    def serialize(self):
+        serialized = {}
+
+        for field in self.__class__.FIELDS:
+            serialized[field] = getattr(self, field)
+
+        return serialized
 
 def convert_utc_to_local(utc_date):
     from_zone = tz.gettz('UTC')
