@@ -3281,7 +3281,7 @@ var LikesPage = (function () {
             this.page(match ? parseInt(match[1]) : 1);
 
             var params = _.assign({}, this.init_request_params, { page: this.page() });
-            $.get('/likes.json', params).done(function (response) {
+            $.get('/date-entries.json', params).done(function (response) {
                 var date_entries = response.date_entries;
                 _this2.max_pages(response.max_pages);
 

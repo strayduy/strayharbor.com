@@ -45,7 +45,7 @@ class User(MongoDocument):
     DATE_FORMAT = '%Y-%m-%d'
     DEFAULT_ENTRIES_LIMIT = 25
 
-    def get_likes(self, offset=0, limit=DEFAULT_ENTRIES_LIMIT, subreddit=None):
+    def get_date_entries(self, offset=0, limit=DEFAULT_ENTRIES_LIMIT, subreddit=None):
         likes_by_date = defaultdict(list)
         num_likes = 0
 
