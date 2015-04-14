@@ -6,7 +6,7 @@
 const $  = require('jquery');
 const _  = require('lodash');
 const ko = require('knockout');
-const moment = require('moment');
+const moment = require('../bower_components/moment/moment.js');
 const string_to_color = require('../bower_components/string-to-color/dist/string-to-color.umd.js');
 
 // Components

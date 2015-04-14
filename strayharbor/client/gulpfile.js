@@ -74,7 +74,7 @@ gulp.task('vendor-fonts', function() {
 });
 
 gulp.task('index-js', function() {
-    return bundle_js('./src/index.js', 'index.bundle.js', false);
+    return bundle_js('./src/index.es6', 'index.bundle.js', false);
 });
 
 gulp.task('index-css', function() {
@@ -94,26 +94,31 @@ gulp.task('index-css', function() {
 gulp.task('watch-index', ['browser-sync'], function() {
     gulp.watch(['./src/**/*.css'], ['index-css', browser_sync.reload]);
     gulp.watch(['../templates/*.html'], [browser_sync.reload]);
-    bundle_js('.src/index.js', 'index.bundle.js', true);
+    bundle_js('./src/index.es6', 'index.bundle.js', true);
 });
 
 gulp.task('subreddit-js', function() {
-    return bundle_js('./src/subreddit.js', 'subreddit.bundle.js', false);
+    return bundle_js('./src/subreddit.es6', 'subreddit.bundle.js', false);
 });
 
 gulp.task('watch-subreddit', ['browser-sync'], function() {
     gulp.watch(['./src/**/*.css'], ['index-css', browser_sync.reload]);
     gulp.watch(['../templates/*.html'], [browser_sync.reload]);
-    bundle_js('.src/subreddit.js', 'subreddit.bundle.js', true);
+    bundle_js('./src/subreddit.es6', 'subreddit.bundle.js', true);
 });
 
 function bundle_js(src_file, dest_file, watch) {
-    var bundler = browserify(src_file);
+    var bundler = browserify({
+        entries: [src_file],
+        extensions: ['.js', '.json', '.es6']
+    });
     var DEST = './static/app/js';
 
     function bundle() {
         return bundler
-            .transform(babelify)
+            .transform(babelify.configure({
+                extensions: ['.es6']
+            }))
             .bundle()
             .pipe(vinyl_source_stream(dest_file))
             .pipe(gulp.dest(DEST))
