@@ -10,6 +10,11 @@ body {
     line-height: 1.6;
     margin-bottom: 100px; /* Sticky footer height */
 }
+.home-link,
+.home-link:focus,
+.home-link:hover {
+    color: #444;
+}
 .media,
 .media-body {
     overflow: visible;

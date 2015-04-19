@@ -1,12 +1,15 @@
 <header class="page-header">
     {% if subreddit %}
         <h1 class="text-center">
-            a list of neat things I found on
+            <a class="home-link" href="/">a list of neat things</a>
+            I found on
             <a href="//www.reddit.com/r/{{ subreddit }}">
                 /r/{{ subreddit }}
             </a>
         </h1>
     {% else %}
-        <h1 class="text-center">a list of neat things I found on the internet</h1>
+        <h1 class="text-center">
+            <a class="home-link" href="/">a list of neat things I found on the internet</a>
+        </h1>
     {% endif %}
 </header>
