@@ -103,3 +103,7 @@ def group_posts_and_likes_by_date(likes, posts, offset=0, limit=ENTRIES_PER_PAGE
 
     return date_entries.values()
 
+@blueprint.route('/favicon.ico')
+def favicon():
+    return current_app.send_static_file('app/img/favicon.ico')
+
