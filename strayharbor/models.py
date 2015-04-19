@@ -51,7 +51,8 @@ class User(MongoDocument):
                               reverse=True)
 
         for like in sorted_likes:
-            yield Like(like)
+            if not subreddit or subreddit == like['subreddit']:
+                yield Like(like)
 
 class Like(object):
     FIELDS = [
