@@ -139,8 +139,10 @@ class User(object):
         self.likes = likes
 
         # Dedupe list
-        # http://stackoverflow.com/a/17016257
-        self.likes = list(OrderedDict.fromkeys(self.likes))
+        # http://stackoverflow.com/a/480227
+        seen = set()
+        self.likes = [l for l in self.likes
+                      if not (l['id'] in seen or seen.add(l['id']))]
 
         collection = self.__class__.db.users
         collection.update({'_id': self.username},
