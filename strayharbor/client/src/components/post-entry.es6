@@ -9,7 +9,7 @@ const ko = require('knockout');
 const template = require('./post-entry.html');
 
 class PostEntry {
-    constructor(params, componentInfo) {
+    constructor(params) {
         this.post = params.post;
     }
 }

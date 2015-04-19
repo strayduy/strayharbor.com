@@ -3175,11 +3175,11 @@ index_page.init();
     }
 });
 },{}],4:[function(require,module,exports){
-module.exports = "<div class=\"date\">\n    <span class=\"display-date\" data-bind=\"html: display_date\">\n    </span>\n</div>\n\n<!-- ko foreach: {data: posts, as: 'post'} -->\n    <post-entry params=\"post: post\"></post-entry>\n<!-- /ko -->\n\n<!-- ko foreach: {data: likes, as: 'like'} -->\n    <like-entry params=\"like: like\"></like-entry>\n<!-- /ko -->\n";
-
-},{}],5:[function(require,module,exports){
 /* jshint browserify: true */
+/* jshint esnext: true */
 'use strict';
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
 // External libs
 var ko = (window.ko);
@@ -3191,24 +3191,22 @@ require('./post-entry');
 // Component template
 var template = require('./date-entry.html');
 
-var DateEntry = function(params) {
-    var self = this;
+var DateEntry = function DateEntry(params) {
+    _classCallCheck(this, DateEntry);
 
-    self.display_date = ko.observable(params.data.display_date);
-    self.posts = ko.observableArray(params.data.posts);
-    self.likes = ko.observableArray(params.data.likes);
+    this.display_date = ko.observable(params.data.display_date);
+    this.posts = ko.observableArray(params.data.posts);
+    this.likes = ko.observableArray(params.data.likes);
 };
 
 ko.components.register('date-entry', {
-    viewModel: {
-        createViewModel: function(params, componentInfo) {
-            return new DateEntry(params);
-        },
-    },
-    template: template,
-});
+    viewModel: DateEntry,
+    template: template });
 
-},{"./date-entry.html":4,"./like-entry":6,"./post-entry":8}],6:[function(require,module,exports){
+},{"./date-entry.html":5,"./like-entry":6,"./post-entry":8}],5:[function(require,module,exports){
+module.exports = "<div class=\"date\">\n    <span class=\"display-date\" data-bind=\"html: display_date\">\n    </span>\n</div>\n\n<!-- ko foreach: {data: posts, as: 'post'} -->\n    <post-entry params=\"post: post\"></post-entry>\n<!-- /ko -->\n\n<!-- ko foreach: {data: likes, as: 'like'} -->\n    <like-entry params=\"like: like\"></like-entry>\n<!-- /ko -->\n";
+
+},{}],6:[function(require,module,exports){
 /* jshint browserify: true */
 /* jshint esnext: true */
 'use strict';
@@ -3247,7 +3245,7 @@ var ko = (window.ko);
 // Component template
 var template = require('./post-entry.html');
 
-var PostEntry = function PostEntry(params, componentInfo) {
+var PostEntry = function PostEntry(params) {
     _classCallCheck(this, PostEntry);
 
     this.post = params.post;
@@ -3366,4 +3364,4 @@ var LikesPage = (function () {
 
 module.exports = LikesPage;
 
-},{"../bower_components/moment/moment.js":2,"../bower_components/string-to-color/dist/string-to-color.umd.js":3,"./components/date-entry":5}]},{},[1]);
+},{"../bower_components/moment/moment.js":2,"../bower_components/string-to-color/dist/string-to-color.umd.js":3,"./components/date-entry":4}]},{},[1]);
