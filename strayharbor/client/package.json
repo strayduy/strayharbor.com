@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "babel": "^5.1.10",
     "babelify": "^6.0.2",
     "bower": "^1.4.1",
     "browser-sync": "^2.5.2",

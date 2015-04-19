@@ -2,6 +2,9 @@
 /* jshint esnext: true */
 'use strict';
 
+// ES6 polyfill
+require("babel/polyfill");
+
 // External libs
 const ko = require('knockout');
 

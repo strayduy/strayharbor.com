@@ -18,7 +18,7 @@ var vinyl_source_stream = require('vinyl-source-stream');
 var watchify            = require('watchify');
 
 gulp.task('default', ['build-all']);
-gulp.task('build-all', ['vendor', 'index', 'subreddit']);
+gulp.task('build-all', ['vendor', 'app']);
 gulp.task('vendor', ['vendor-js', 'vendor-css', 'vendor-fonts']);
 gulp.task('app', ['index', 'subreddit', 'posts', 'post']);
 gulp.task('index', ['index-js', 'index-css']);
