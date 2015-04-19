@@ -1,15 +1,16 @@
 # Standard libs
-from collections import defaultdict
 from datetime import datetime
 from dateutil import tz
-import math
+import markdown
 import os
+import re
 
 # Our libs
 from .database import Database
 
 # Constants
 LOCAL_TIMEZONE = os.getenv('TZ', 'America/Los_Angeles')
+DATE_FORMAT = '%Y-%m-%d'
 
 class MongoDocument(object):
     database = Database
@@ -42,61 +43,15 @@ class MongoDocument(object):
 
 class User(MongoDocument):
     COLLECTION = 'users'
-    DATE_FORMAT = '%Y-%m-%d'
     DEFAULT_ENTRIES_LIMIT = 25
 
-    def get_date_entries(self, offset=0, limit=DEFAULT_ENTRIES_LIMIT, subreddit=None):
-        likes_by_date = defaultdict(list)
-        num_likes = 0
-
-        for like in self.get('likes', []):
-            like = Like(like)
-
-            utc_date = datetime.utcfromtimestamp(like.created_utc)
-            local_date = convert_utc_to_local(utc_date)
-            local_date = local_date.strftime(self.__class__.DATE_FORMAT)
-
-            if not subreddit or like.subreddit == subreddit:
-                likes_by_date[local_date].append(like.serialize())
-                num_likes += 1
-
-        date_entries = sorted([{'date': local_date, 'likes': likes}
-                               for local_date, likes
-                               in likes_by_date.iteritems()],
-                              key=lambda entry: entry['date'],
+    def get_likes(self, subreddit=None):
+        sorted_likes = sorted(self.get('likes', []),
+                              key=lambda like: like['created_utc'],
                               reverse=True)
 
-        paginated_date_entries = self.__class__.paginate_date_entries(date_entries,
-                                                                      offset,
-                                                                      limit)
-
-        max_pages = int(math.ceil(num_likes / float(limit)))
-
-        return {'date_entries': paginated_date_entries, 'max_pages': max_pages}
-
-    @staticmethod
-    def paginate_date_entries(date_entries, offset, limit):
-        paginated_date_entries = []
-        like_index = 0
-        max_index = offset + limit - 1
-
-        for date_entry in date_entries:
-            paginated_likes = []
-            for like in date_entry['likes']:
-                if like_index > max_index:
-                    break
-                if like_index >= offset:
-                    paginated_likes.append(like)
-                like_index += 1
-
-            if paginated_likes:
-                date_entry['likes'] = paginated_likes
-                paginated_date_entries.append(date_entry)
-
-            if like_index > max_index:
-                break
-
-        return paginated_date_entries
+        for like in sorted_likes:
+            yield Like(like)
 
 class Like(object):
     FIELDS = [
@@ -113,11 +68,97 @@ class Like(object):
         for field in self.__class__.FIELDS:
             setattr(self, field, data[field])
 
+    @property
+    def date(self):
+        utc_date = datetime.utcfromtimestamp(self.created_utc)
+        local_date = convert_utc_to_local(utc_date)
+        return local_date
+
     def serialize(self):
         serialized = {}
 
         for field in self.__class__.FIELDS:
             serialized[field] = getattr(self, field)
+
+        return serialized
+
+class Post(object):
+    POSTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'posts')
+    FILENAME_REGEX = re.compile(r'^(\d{4}-\d{2}-\d{2})-(.+)\.md$')
+
+    @classmethod
+    def get_all(cls):
+        sorted_filepaths = sorted(os.listdir(cls.POSTS_DIR), reverse=True)
+        for filepath in sorted_filepaths:
+            post = cls.from_filepath(filepath)
+            if not post:
+                continue
+
+            yield post
+
+    @classmethod
+    def from_filepath(cls, filepath):
+        match_obj = cls.FILENAME_REGEX.match(filepath)
+        if not match_obj:
+            return None
+
+        post = Post()
+
+        post.date = datetime.strptime(match_obj.group(1), DATE_FORMAT)
+
+        # Set post date to local timezone
+        local_tz = tz.gettz(LOCAL_TIMEZONE)
+        post.date = post.date.replace(tzinfo=local_tz).astimezone(local_tz)
+
+        post.slug = match_obj.group(2)
+        post.filepath = os.path.join(cls.POSTS_DIR, filepath)
+        post._title = ''
+        post._content = ''
+
+        return post
+
+    @classmethod
+    def from_date_slug(cls, year, month, day, slug):
+        filepath = '%04d-%02d-%02d-%s.md' % (year, month, day, slug)
+        #filepath = os.path.join(cls.POSTS_DIR, basename)
+        return cls.from_filepath(filepath)
+
+    def __init__(self):
+        self.has_loaded_file = False
+
+    def load_file(self):
+        with open(self.filepath, 'r') as f:
+            self._title = f.readline().strip()
+            self._content = ''.join(f.readlines()).strip()
+
+        self.has_loaded_file = True
+
+    @property
+    def title(self):
+        if not self.has_loaded_file:
+            self.load_file()
+
+        return self._title
+
+    @property
+    def content(self):
+        if not self.has_loaded_file:
+            self.load_file()
+
+        return self._content
+
+    @property
+    def url(self):
+        return self.date.strftime('/posts/%Y/%m/%d/') + self.slug
+
+    def serialize(self):
+        serialized = {
+            'date': self.date.strftime(DATE_FORMAT),
+            'slug': self.slug,
+            'title': self.title,
+            'content': markdown.markdown(self.content),
+            'url': self.url,
+        }
 
         return serialized
 

@@ -31,7 +31,7 @@ var index_page = new IndexPage();
 ko.applyBindings(index_page);
 index_page.init();
 
-},{"./likes-page":6}],2:[function(require,module,exports){
+},{"./likes-page":10}],2:[function(require,module,exports){
 (function (global){
 //! moment.js
 //! version : 2.9.0
@@ -3175,7 +3175,7 @@ index_page.init();
     }
 });
 },{}],4:[function(require,module,exports){
-module.exports = "<div class=\"date\">\n    <span class=\"display-date\" data-bind=\"html: display_date\">\n    </span>\n</div>\n\n<!-- ko foreach: {data: likes, as: 'like'} -->\n    <div class=\"like-entry panel panel-default\">\n        <div class=\"panel-body\">\n            <div class=\"media\">\n                <!-- ko if: like.thumbnail && like.thumbnail !== 'self' && like.thumbnail !== 'default' -->\n                    <div class=\"media-left\">\n                        <a data-bind=\"attr: {href: like.url}\">\n                            <img data-bind=\"attr: {src: like.thumbnail}\">\n                        </a>\n                    </div>\n                <!-- /ko -->\n                <div class=\"media-body\">\n                    <a class=\"like-title\" data-bind=\"text: like.title, attr: {href: like.url}\">\n                    </a>\n                    <div class=\"bottom-links\">\n                        <div class=\"pull-left\">\n                            <a class=\"like-comments\" data-bind=\"text: like.comments_text, attr: {href: like.permalink}\">\n                            </a>\n                        </div>\n                        <div class=\"pull-right text-right\">\n                            <a class=\"like-subreddit\" data-bind=\"text: like.subreddit_text, attr: {href: like.subreddit_url}, style: {backgroundColor: like.subreddit_color}\">\n                            </a>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n<!-- /ko -->\n";
+module.exports = "<div class=\"date\">\n    <span class=\"display-date\" data-bind=\"html: display_date\">\n    </span>\n</div>\n\n<!-- ko foreach: {data: posts, as: 'post'} -->\n    <post-entry params=\"post: post\"></post-entry>\n<!-- /ko -->\n\n<!-- ko foreach: {data: likes, as: 'like'} -->\n    <like-entry params=\"like: like\"></like-entry>\n<!-- /ko -->\n";
 
 },{}],5:[function(require,module,exports){
 /* jshint browserify: true */
@@ -3184,6 +3184,10 @@ module.exports = "<div class=\"date\">\n    <span class=\"display-date\" data-bi
 // External libs
 var ko = (window.ko);
 
+// Components
+require('./like-entry');
+require('./post-entry');
+
 // Component template
 var template = require('./date-entry.html');
 
@@ -3191,6 +3195,7 @@ var DateEntry = function(params) {
     var self = this;
 
     self.display_date = ko.observable(params.data.display_date);
+    self.posts = ko.observableArray(params.data.posts);
     self.likes = ko.observableArray(params.data.likes);
 };
 
@@ -3203,7 +3208,59 @@ ko.components.register('date-entry', {
     template: template,
 });
 
-},{"./date-entry.html":4}],6:[function(require,module,exports){
+},{"./date-entry.html":4,"./like-entry":6,"./post-entry":8}],6:[function(require,module,exports){
+/* jshint browserify: true */
+/* jshint esnext: true */
+'use strict';
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+
+// External libs
+var ko = (window.ko);
+
+// Component template
+var template = require('./like-entry.html');
+
+var LikeEntry = function LikeEntry(params) {
+    _classCallCheck(this, LikeEntry);
+
+    this.like = params.like;
+};
+
+ko.components.register('like-entry', {
+    viewModel: LikeEntry,
+    template: template });
+
+},{"./like-entry.html":7}],7:[function(require,module,exports){
+module.exports = "<div class=\"like-entry panel panel-default\">\n    <div class=\"panel-body\">\n        <div class=\"media\">\n            <!-- ko if: like.thumbnail && like.thumbnail !== 'self' && like.thumbnail !== 'default' -->\n                <div class=\"media-left\">\n                    <a data-bind=\"attr: {href: like.url}\">\n                        <img data-bind=\"attr: {src: like.thumbnail}\">\n                    </a>\n                </div>\n            <!-- /ko -->\n            <div class=\"media-body\">\n                <a class=\"like-title\" data-bind=\"text: like.title, attr: {href: like.url}\">\n                </a>\n                <div class=\"bottom-links\">\n                    <div class=\"pull-left\">\n                        <a class=\"like-comments\" data-bind=\"text: like.comments_text, attr: {href: like.permalink}\">\n                        </a>\n                    </div>\n                    <div class=\"pull-right text-right\">\n                        <a class=\"like-subreddit\" data-bind=\"text: like.subreddit_text, attr: {href: like.subreddit_url}, style: {backgroundColor: like.subreddit_color}\">\n                        </a>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n";
+
+},{}],8:[function(require,module,exports){
+/* jshint browserify: true */
+/* jshint esnext: true */
+'use strict';
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+
+// External libs
+var ko = (window.ko);
+
+// Component template
+var template = require('./post-entry.html');
+
+var PostEntry = function PostEntry(params, componentInfo) {
+    _classCallCheck(this, PostEntry);
+
+    this.post = params.post;
+};
+
+ko.components.register('post-entry', {
+    viewModel: PostEntry,
+    template: template });
+
+},{"./post-entry.html":9}],9:[function(require,module,exports){
+module.exports = "<div class=\"post-entry panel panel-default\">\n    <div class=\"panel-body\">\n        <h3 class=\"post-title\">\n            <a data-bind=\"html: ko.unwrap(post).title, attr: {href: ko.unwrap(post).url}\"></a>\n        </h3>\n        <div class=\"post-content\" data-bind=\"html: ko.unwrap(post).content\">\n        </div>\n        <div class=\"text-right\">\n            <a class=\"posts-link\" href=\"/posts/\">\n                self.posts\n            </a>\n        </div>\n    </div>\n</div>\n";
+
+},{}],10:[function(require,module,exports){
 /* jshint browserify: true */
 /* jshint esnext: true */
 'use strict';

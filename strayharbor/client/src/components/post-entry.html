@@ -1,0 +1,14 @@
+<div class="post-entry panel panel-default">
+    <div class="panel-body">
+        <h3 class="post-title">
+            <a data-bind="html: ko.unwrap(post).title, attr: {href: ko.unwrap(post).url}"></a>
+        </h3>
+        <div class="post-content" data-bind="html: ko.unwrap(post).content">
+        </div>
+        <div class="text-right">
+            <a class="posts-link" href="/posts/">
+                self.posts
+            </a>
+        </div>
+    </div>
+</div>

@@ -20,9 +20,11 @@ var watchify            = require('watchify');
 gulp.task('default', ['build-all']);
 gulp.task('build-all', ['vendor', 'index', 'subreddit']);
 gulp.task('vendor', ['vendor-js', 'vendor-css', 'vendor-fonts']);
-gulp.task('app', ['index', 'subreddit']);
+gulp.task('app', ['index', 'subreddit', 'posts', 'post']);
 gulp.task('index', ['index-js', 'index-css']);
-gulp.task('subreddit', ['subreddit-js']);
+gulp.task('subreddit', ['subreddit-js', 'index-css']);
+gulp.task('posts', ['posts-js', 'index-css']);
+gulp.task('post', ['post-js', 'index-css']);
 
 gulp.task('browser-sync', function() {
     browser_sync({
@@ -96,6 +98,7 @@ gulp.task('index-css', function() {
 gulp.task('watch-index', ['browser-sync'], function() {
     gulp.watch(['./src/**/*.css'], ['index-css', browser_sync.reload]);
     gulp.watch(['../templates/*.html'], [browser_sync.reload]);
+    gulp.watch(['./src/components/*.js', './src/components/*.html'], ['index-js', browser_sync.reload]);
     bundle_js('./src/index.es6', 'index.bundle.js', true);
 });
 
@@ -106,7 +109,30 @@ gulp.task('subreddit-js', function() {
 gulp.task('watch-subreddit', ['browser-sync'], function() {
     gulp.watch(['./src/**/*.css'], ['index-css', browser_sync.reload]);
     gulp.watch(['../templates/*.html'], [browser_sync.reload]);
+    gulp.watch(['./src/components/*.js', './src/components/*.html'], ['subreddit-js', browser_sync.reload]);
     bundle_js('./src/subreddit.es6', 'subreddit.bundle.js', true);
+});
+
+gulp.task('posts-js', function() {
+    return bundle_js('./src/posts.es6', 'posts.bundle.js', false);
+});
+
+gulp.task('watch-posts', ['browser-sync'], function() {
+    gulp.watch(['./src/**/*.css'], ['index-css', browser_sync.reload]);
+    gulp.watch(['../templates/*.html'], [browser_sync.reload]);
+    gulp.watch(['./src/components/*.js', './src/components/*.html'], ['posts-js', browser_sync.reload]);
+    bundle_js('./src/posts.es6', 'posts.bundle.js', true);
+});
+
+gulp.task('post-js', function() {
+    return bundle_js('./src/post.es6', 'post.bundle.js', false);
+});
+
+gulp.task('watch-post', ['browser-sync'], function() {
+    gulp.watch(['./src/**/*.css'], ['index-css', browser_sync.reload]);
+    gulp.watch(['../templates/*.html'], [browser_sync.reload]);
+    gulp.watch(['./src/components/*.js', './src/components/*.html'], ['post-js', browser_sync.reload]);
+    bundle_js('./src/post.es6', 'post.bundle.js', true);
 });
 
 function bundle_js(src_file, dest_file, watch) {

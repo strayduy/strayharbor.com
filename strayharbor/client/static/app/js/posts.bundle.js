@@ -15,28 +15,25 @@ var ko = (window.ko);
 // Our libs
 var LikesPage = require('./likes-page');
 
-var SubredditPage = (function (_LikesPage) {
-    function SubredditPage() {
-        _classCallCheck(this, SubredditPage);
+var PostsPage = (function (_LikesPage) {
+    function PostsPage() {
+        _classCallCheck(this, PostsPage);
 
-        _get(Object.getPrototypeOf(SubredditPage.prototype), 'constructor', this).call(this);
+        _get(Object.getPrototypeOf(PostsPage.prototype), 'constructor', this).call(this);
 
-        var subreddit_regex = /^\/r\/([^\/]+)(\/page\/(\d+)\/?)?/gi;
-        var match = subreddit_regex.exec(window.location.pathname);
-        this.subreddit = match[1];
-        this.base_url('/r/' + this.subreddit);
+        this.base_url('/posts/');
 
-        this.init_request_params = { subreddit: this.subreddit };
+        this.init_request_params = { only_posts: true };
     }
 
-    _inherits(SubredditPage, _LikesPage);
+    _inherits(PostsPage, _LikesPage);
 
-    return SubredditPage;
+    return PostsPage;
 })(LikesPage);
 
-var subreddit_page = new SubredditPage();
-ko.applyBindings(subreddit_page);
-subreddit_page.init();
+var posts_page = new PostsPage();
+ko.applyBindings(posts_page);
+posts_page.init();
 
 },{"./likes-page":10}],2:[function(require,module,exports){
 (function (global){
@@ -3254,7 +3251,7 @@ var ko = (window.ko);
 // Component template
 var template = require('./post-entry.html');
 
-var PostEntry = function PostEntry(params, componentInfo) {
+var PostEntry = function PostEntry(params) {
     _classCallCheck(this, PostEntry);
 
     this.post = params.post;
