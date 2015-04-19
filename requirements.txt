@@ -1,5 +1,5 @@
 Flask==0.10.1
--e git://github.com/strayduy/Flask-CacheBust.git@a17e22a42a5ce531bf774531c17d84b82bc56e9a#egg=Flask_CacheBust-origin/add-setup-py
+-e git://github.com/strayduy/Flask-CacheBust.git@add-setup-py#egg=Flask_CacheBust
 Flask-Script==2.0.5
 Jinja2==2.7.3
 Markdown==2.6.1
