@@ -27,7 +27,7 @@ def main():
     args = parser.parse_args()
 
     # Load config based on environment
-    env = os.getenv('APP_ENV', 'prod')
+    env = os.getenv('APP_ENV', 'dev')
     config = get_config(env)
 
     # Configure logging
