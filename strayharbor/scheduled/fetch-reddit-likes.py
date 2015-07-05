@@ -35,7 +35,6 @@ def main():
 
     # Connect to database
     connect_to_database(config)
-    Database.db['upvotes'].remove()
 
     # Find the user's most recent upvote
     most_recent_upvote = None
