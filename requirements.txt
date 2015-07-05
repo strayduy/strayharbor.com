@@ -1,6 +1,6 @@
 Flask==0.10.1
 -e git://github.com/strayduy/Flask-CacheBust.git@add-setup-py#egg=Flask_CacheBust
-Flask-Compress==1.2.0
+Flask-Compress==1.2.1
 Flask-Script==2.0.5
 Jinja2==2.7.3
 Markdown==2.6.1

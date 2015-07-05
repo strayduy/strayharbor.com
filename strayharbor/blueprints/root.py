@@ -13,8 +13,8 @@ from repoze.lru import ExpiringLRUCache
 
 # Our libs
 from ..models import DATE_FORMAT
-from ..models import Like
 from ..models import Post
+from ..models import Upvote
 from ..models import User
 
 # Constants
@@ -67,7 +67,7 @@ def likes_json():
     else:
         posts = [] if subreddit else [p for p in Post.get_all()]
         user = User.get_by_id(current_app.config['REDDIT_USERNAME'])
-        likes = [] if only_posts else [l for l in user.get_likes(subreddit=subreddit)]
+        likes = [] if only_posts else [l for l in user.get_upvotes(subreddit=subreddit)]
         offset = ENTRIES_PER_PAGE * (page - 1)
 
         date_entries = group_posts_and_likes_by_date(posts, likes, offset=offset)
@@ -92,7 +92,7 @@ def group_posts_and_likes_by_date(likes, posts, offset=0, limit=ENTRIES_PER_PAGE
     for obj in combined[offset:offset + limit]:
         if isinstance(obj, Post):
             type_key = 'posts'
-        elif isinstance(obj, Like):
+        elif isinstance(obj, Upvote):
             type_key = 'likes'
         else:
             continue

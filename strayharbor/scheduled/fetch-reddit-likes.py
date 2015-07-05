@@ -10,8 +10,14 @@ import sys
 import time
 
 # Third party libs
+import flask
 import pymongo
 import requests
+
+# Our libs
+from ..database import Database
+from ..models import User
+from ..settings import DevConfig, ProdConfig
 
 def main():
     # Parse command line arguments
@@ -20,31 +26,65 @@ def main():
     parser.add_argument('reddit_username')
     args = parser.parse_args()
 
+    # Load config based on environment
+    env = os.getenv('APP_ENV', 'prod')
+    config = get_config(env)
+
     # Configure logging
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-    # Initialize database and User model
-    db = Database.connect()
-    User.db = db
+    # Connect to database
+    connect_to_database(config)
+    Database.db['upvotes'].remove()
 
-    # Find the user's most recent like
-    most_recent_like = None
-    user = User.get(args.reddit_username)
+    # Find the user's most recent upvote
+    most_recent_upvote = None
+    user = User.get_by_id(args.reddit_username)
     if user:
-        most_recent_like = user.get_most_recent_like()
+        most_recent_upvote = user.get_most_recent_upvote()
 
+    # Fetch recent upvotes
     redditor = Redditor(args.reddit_username)
 
-    logging.debug('Fetching likes for /u/%s' % (redditor.username))
-    likes = redditor.get_likes(since=most_recent_like)
-    logging.debug('Found %d new likes for /u/%s' % (len(likes),
-                                                    redditor.username))
+    logging.debug('Fetching upvotes for /u/%s' % (redditor.username))
+    upvotes = redditor.get_upvotes(since=most_recent_upvote)
+    logging.debug('Found %d new upvotes for /u/%s' % (len(upvotes),
+                                                      redditor.username))
 
-    # Save the user's likes to our database
-    if user:
-        user.save_likes(likes)
+    # Nothing to store
+    if not upvotes:
+        return
+
+    # Create a user record if it doesn't already exist
+    if not user:
+        user_data = {
+            '_id': redditor.username,
+            'username': redditor.username,
+        }
+        user = User.create(user_data)
+
+    # Save upvotes
+    user.save_upvotes(upvotes)
+
+def get_config(env):
+    config = flask.config.Config('')
+
+    if env.lower() == 'prod':
+        config.from_object(ProdConfig())
     else:
-        User.create(redditor.username, likes)
+        config.from_object(DevConfig())
+
+    return config
+
+def connect_to_database(config):
+    db_config = {
+        'host': config.get('USER_DB_HOST', ''),
+        'name': config.get('USER_DB_NAME', ''),
+        'user': config.get('USER_DB_USER', ''),
+        'password': config.get('USER_DB_PASSWORD', ''),
+    }
+
+    Database.connect(**db_config)
 
 class Redditor(object):
     USERNAME_REGEX = re.compile(r'^[\w_-]{3,20}$')
@@ -63,14 +103,14 @@ class Redditor(object):
         self.api_headers = {}
         self.api_headers['User-Agent'] = self.__class__.API_USER_AGENT
 
-    def get_likes(self, since=None):
+    def get_upvotes(self, since=None):
         cls = self.__class__
-        endpoint = '/user/%s/liked.json' % (self.username)
+        endpoint = '/user/%s/upvoted.json' % (self.username)
         endpoint_url = self.__class__.API_BASE_URL + endpoint
 
-        likes = []
+        upvotes = []
         after = None
-        found_most_recent_like = False
+        found_most_recent_upvote = False
 
         for page in xrange(cls.MAX_PAGES):
             if page > 0:
@@ -90,76 +130,21 @@ class Redditor(object):
             res_data = res.json()['data']
 
             for child in res_data['children']:
-                like = child['data']
+                upvote = child['data']
 
-                if since and like['name'] == since['name']:
-                    found_most_recent_like = True
-                    break
+                if since and upvote['name'] == since['name']:
+                    found_most_recent_upvote = True
 
-                likes.append(like)
+                upvotes.append(upvote)
 
-            if found_most_recent_like:
+            if found_most_recent_upvote:
                 break
 
             after = res_data['after']
             if not after:
                 break
 
-        return likes
-
-class User(object):
-    db = None
-
-    @classmethod
-    def get(cls, username):
-        user = None
-        collection = cls.db.users
-        user_data = collection.find_one({'_id': username})
-
-        if user_data:
-            user = User(user_data)
-
-        return user
-
-    @classmethod
-    def create(cls, username, likes):
-        collection = cls.db.users
-        collection.insert({'_id': username, 'likes': likes})
-
-    def __init__(self, data):
-        self.username = data['_id']
-        self.likes = data.get('likes', [])
-
-    def get_most_recent_like(self):
-        return self.likes[0] if self.likes else None
-
-    def save_likes(self, likes):
-        # Prepend likes to self.likes
-        likes.extend(self.likes)
-        self.likes = likes
-
-        # Dedupe list
-        # http://stackoverflow.com/a/480227
-        seen = set()
-        self.likes = [l for l in self.likes
-                      if not (l['id'] in seen or seen.add(l['id']))]
-
-        collection = self.__class__.db.users
-        collection.update({'_id': self.username},
-                          {'$set': {'likes': self.likes}})
-
-class Database(object):
-    HOST = os.getenv('USER_DB_HOST', '')
-    NAME = os.getenv('USER_DB_NAME', '')
-    USER = os.getenv('USER_DB_USER', '')
-    PASSWORD = os.getenv('USER_DB_PASSWORD', '')
-
-    @classmethod
-    def connect(cls):
-        client = pymongo.MongoClient(cls.HOST)
-        db = client[cls.NAME]
-        db.authenticate(cls.USER, cls.PASSWORD)
-        return db
+        return upvotes
 
 if __name__ == '__main__':
     main()

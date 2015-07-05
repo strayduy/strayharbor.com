@@ -5,6 +5,9 @@ import markdown
 import os
 import re
 
+# Third party libs
+import pymongo
+
 # Our libs
 from .database import Database
 
@@ -17,6 +20,21 @@ class MongoDocument(object):
     COLLECTION = ''
 
     @classmethod
+    def create(cls, data):
+        if not cls.COLLECTION:
+            raise NotImplementedError('COLLECTION not set')
+
+        # Create a shallow copy so we don't mutate the original data
+        data_copy = data.copy()
+        data_copy['created_on'] = datetime.utcnow()
+
+        _id = cls.database.db[cls.COLLECTION].insert(data_copy)
+        instance = cls(data=data_copy)
+        instance['_id'] = _id
+
+        return instance
+
+    @classmethod
     def get_by_id(cls, _id):
         if not cls.COLLECTION:
             raise NotImplementedError('COLLECTION not set')
@@ -25,9 +43,24 @@ class MongoDocument(object):
         data = cls.database.db[cls.COLLECTION].find_one({'_id': _id})
 
         if data:
-            instance = cls(data)
+            instance = cls(data=data)
 
         return instance
+
+    @classmethod
+    def find(cls, query, fields=None, limit=None, sort=None):
+        if not cls.COLLECTION:
+            raise NotImplementedError('COLLECTION not set')
+
+        cursor = cls.database.db[cls.COLLECTION].find(query, fields)
+
+        if limit:
+            cursor.limit(limit)
+
+        if sort:
+            cursor.sort(sort)
+
+        return (cls(document) for document in cursor)
 
     def __init__(self, data=None):
         self.data = data if data else {}
@@ -45,16 +78,40 @@ class User(MongoDocument):
     COLLECTION = 'users'
     DEFAULT_ENTRIES_LIMIT = 25
 
-    def get_likes(self, subreddit=None):
-        sorted_likes = sorted(self.get('likes', []),
-                              key=lambda like: like['created_utc'],
-                              reverse=True)
+    def get_upvotes(self, subreddit=None):
+        query = {'username': self['_id']}
+        sort = [('created_utc', pymongo.DESCENDING)]
 
-        for like in sorted_likes:
-            if not subreddit or subreddit == like['subreddit']:
-                yield Like(like)
+        upvotes = [u for u in Upvote.find(query, sort=sort)]
 
-class Like(object):
+        for upvote in upvotes:
+            if not subreddit or subreddit == upvote['subreddit']:
+                yield upvote
+
+    def get_most_recent_upvote(self):
+        query = {'username': self['_id']}
+        sort = [('created_on', pymongo.DESCENDING)]
+
+        upvotes = [u for u in Upvote.find(query, limit=1, sort=sort)]
+
+        return Upvote(data=upvotes[0]) if upvotes else None
+
+    def save_upvotes(self, upvotes):
+        for upvote in upvotes:
+            try:
+                # Create a copy to avoid mutating the original
+                upvote_copy = upvote.copy()
+                upvote_copy['_id'] = upvote_copy['name']
+                upvote_copy['username'] = self['_id']
+
+                Upvote.create(data=upvote_copy)
+            except pymongo.errors.DuplicateKeyError:
+                # We already saved this upvote
+                # We're okay with this error, so we can ignore it
+                pass
+
+class Upvote(MongoDocument):
+    COLLECTION = 'upvotes'
     FIELDS = [
         'created_utc',
         'num_comments',
@@ -65,13 +122,9 @@ class Like(object):
         'url',
     ]
 
-    def __init__(self, data):
-        for field in self.__class__.FIELDS:
-            setattr(self, field, data[field])
-
     @property
     def date(self):
-        utc_date = datetime.utcfromtimestamp(self.created_utc)
+        utc_date = datetime.utcfromtimestamp(self['created_utc'])
         local_date = convert_utc_to_local(utc_date)
         return local_date
 
@@ -79,7 +132,7 @@ class Like(object):
         serialized = {}
 
         for field in self.__class__.FIELDS:
-            serialized[field] = getattr(self, field)
+            serialized[field] = self[field]
 
         return serialized
 
