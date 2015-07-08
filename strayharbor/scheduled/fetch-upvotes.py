@@ -87,7 +87,7 @@ def connect_to_database(config):
 
 class Redditor(object):
     USERNAME_REGEX = re.compile(r'^[\w_-]{3,20}$')
-    API_BASE_URL = 'http://www.reddit.com'
+    API_BASE_URL = 'https://www.reddit.com'
     API_USER_AGENT = os.getenv('REDDIT_API_USER_AGENT', '')
     LIKES_PER_PAGE = 100
     MAX_PAGES = 20
