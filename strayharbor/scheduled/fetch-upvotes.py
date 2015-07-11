@@ -13,6 +13,7 @@ import time
 import flask
 import pymongo
 import requests
+from requests.auth import HTTPBasicAuth
 
 # Our libs
 from ..database import Database
@@ -44,6 +45,7 @@ def main():
 
     # Fetch recent upvotes
     redditor = Redditor(args.reddit_username)
+    redditor.login()
 
     logging.debug('Fetching upvotes for /u/%s' % (redditor.username))
     upvotes = redditor.get_upvotes(since=most_recent_upvote)
@@ -87,8 +89,11 @@ def connect_to_database(config):
 
 class Redditor(object):
     USERNAME_REGEX = re.compile(r'^[\w_-]{3,20}$')
-    API_BASE_URL = 'https://www.reddit.com'
+    API_ACCESS_TOKEN_URL = 'https://www.reddit.com/api/v1/access_token'
+    API_BASE_URL = 'https://oauth.reddit.com'
     API_USER_AGENT = os.getenv('REDDIT_API_USER_AGENT', '')
+    APP_ID = os.getenv('REDDIT_APP_ID', '')
+    APP_SECRET = os.getenv('REDDIT_APP_SECRET', '')
     LIKES_PER_PAGE = 100
     MAX_PAGES = 20
     REQUEST_DELAY_IN_SECONDS = 2
@@ -99,8 +104,22 @@ class Redditor(object):
 
         self.username = username
 
-        self.api_headers = {}
-        self.api_headers['User-Agent'] = self.__class__.API_USER_AGENT
+        self.session = requests.Session()
+        self.session.headers.update({'User-Agent': self.__class__.API_USER_AGENT})
+
+        self.access_token = ''
+
+    def login(self):
+        cls = self.__class__
+
+        # Retrieve access token
+        params = {'grant_type': 'client_credentials'}
+        auth = HTTPBasicAuth(cls.APP_ID, cls.APP_SECRET)
+        res = self.session.post(cls.API_ACCESS_TOKEN_URL, params=params, auth=auth)
+        self.access_token = res.json()['access_token']
+
+        # Set auth header for future requests within this session
+        self.session.headers.update({'Authorization': 'bearer %s' % (self.access_token)})
 
     def get_upvotes(self, since=None):
         cls = self.__class__
@@ -123,9 +142,7 @@ class Redditor(object):
             if after:
                 params['after'] = after
 
-            res = requests.get(endpoint_url,
-                               params=params,
-                               headers=self.api_headers)
+            res = self.session.get(endpoint_url, params=params)
             res_data = res.json()['data']
 
             for child in res_data['children']:
