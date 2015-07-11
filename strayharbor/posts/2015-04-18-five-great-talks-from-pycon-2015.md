@@ -1,4 +1,4 @@
-Some great talks from PyCon 2015
+Five great talks from PyCon 2015
 
 - [Beyond grep: Practical Logging and Metrics - Hynek Schlawack](https://www.youtube.com/watch?v=gqmAwK0wNyw)
 
