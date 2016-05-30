@@ -29,12 +29,12 @@ blueprint = Blueprint('root', __name__)
 cache = ExpiringLRUCache(MAX_CACHE_ENTRIES, default_timeout=CACHE_TIMEOUT_IN_SECONDS)
 
 @blueprint.route('/')
-@blueprint.route('/page/<int:page>/')
-def index(page=1):
+@blueprint.route('/page/<int:page>')
+@blueprint.route('/r/<subreddit>')
+@blueprint.route('/r/<subreddit>/page/<int:page>')
+def index(subreddit=None, page=1):
     return render_template('index.html')
 
-@blueprint.route('/r/<subreddit>/')
-@blueprint.route('/r/<subreddit>/page/<int:page>/')
 def subreddit(subreddit, page=1):
     return render_template('subreddit.html', subreddit=subreddit)
 
@@ -55,6 +55,8 @@ def post_json(year, month, day, slug):
 
 @blueprint.route('/date-entries.json')
 def likes_json():
+    import time
+    time.sleep(1)
     only_posts = request.args.get('only_posts', '').lower() == 'true'
     subreddit = request.args.get('subreddit', '')
     page = int(request.args.get('page', 1))
@@ -93,7 +95,7 @@ def group_posts_and_likes_by_date(likes, posts, offset=0, limit=ENTRIES_PER_PAGE
         if isinstance(obj, Post):
             type_key = 'posts'
         elif isinstance(obj, Upvote):
-            type_key = 'likes'
+            type_key = 'upvotes'
         else:
             continue
 
