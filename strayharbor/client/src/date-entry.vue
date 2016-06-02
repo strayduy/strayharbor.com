@@ -1,11 +1,33 @@
-<template>
-    <div class="date">
-        <span class="display-date">{{ display_date }}</span>
-    </div>
+<style>
+.date-entry {
+    display: block;
+    margin-bottom: 60px;
+}
+.date {
+    background-color: #444;
+    height: 1px;
+    margin: 25px 0 30px 0;
+    text-align: center;
+}
+.display-date {
+    background-color: #eeeeee;
+    font-size: 25px;
+    padding: 0px 10px;
+    position: relative;
+    top: -20px;
+}
+</style>
 
-    <template v-for="upvote_data in upvotes">
-        <upvote-entry :upvote_data="upvote_data"></upvote-entry>
-    </template>
+<template>
+    <div class="date-entry">
+        <div class="date">
+            <span class="display-date">{{ display_date }}</span>
+        </div>
+
+        <template v-for="upvote_data in upvotes">
+            <upvote-entry :upvote_data="upvote_data"></upvote-entry>
+        </template>
+    </div>
 </template>
 
 <script>

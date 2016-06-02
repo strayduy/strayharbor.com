@@ -1,5 +1,48 @@
+<style>
+.upvote-entry {
+    margin-bottom: 40px;
+}
+.upvote-title {
+    display: block;
+    font-size: 22px;
+    padding-bottom: 45px;
+}
+.upvote-title:hover,
+.upvote-title:active {
+    text-decoration: none;
+}
+.media,
+.media-body {
+    overflow: visible;
+}
+.media-body {
+    position: relative;
+}
+.upvote-comments,
+.upvote-comments:hover,
+.upvote-comments:focus,
+.upvote-comments:active {
+    color: #888;
+}
+.upvote-subreddit {
+    border-radius: 4px;
+    padding: 3px 6px;
+}
+.upvote-subreddit,
+.upvote-subreddit:hover,
+.upvote-subreddit:focus,
+.upvote-subreddit:active {
+    color: #fff;
+}
+.bottom-links {
+    bottom: -5px;
+    position: absolute;
+    width: 100%;
+}
+</style>
+
 <template>
-    <div class="like-entry panel panel-default">
+    <div class="upvote-entry panel panel-default">
         <div class="panel-body">
             <div class="media">
                 <template v-if="has_thumbnail">
@@ -10,17 +53,17 @@
                     </div>
                 </template>
                 <div class="media-body">
-                    <a class="like-title" :href="upvote_data.url">
+                    <a class="upvote-title" :href="upvote_data.url">
                         {{ upvote_data.title }}
                     </a>
                     <div class="bottom-links">
                         <div class="pull-left">
-                            <a class="like-comments" :href="upvote_data.permalink">
+                            <a class="upvote-comments" :href="upvote_data.permalink">
                                 {{ comments_text }}
                             </a>
                         </div>
                         <div class="pull-right text-right">
-                            <a class="like-subreddit" v-link="{path: subreddit_url}" :style="{backgroundColor: subreddit_bg_color, color: subreddit_text_color}">
+                            <a class="upvote-subreddit" v-link="{path: subreddit_url}" :style="{backgroundColor: subreddit_bg_color, color: subreddit_text_color}">
                                 {{ subreddit_text }}
                             </a>
                         </div>

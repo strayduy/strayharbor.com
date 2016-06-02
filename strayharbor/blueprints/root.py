@@ -74,8 +74,6 @@ def post_json(year, month, day, slug):
 
 @blueprint.route('/date-entries.json')
 def likes_json():
-    import time
-    time.sleep(1)
     only_posts = request.args.get('only_posts', '').lower() == 'true'
     subreddit = request.args.get('subreddit', '')
     page = int(request.args.get('page', 1))

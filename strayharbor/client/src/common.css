@@ -1,0 +1,39 @@
+html {
+    min-height: 100%; /* Required for sticky footer */
+    position: relative; /* Required for sticky footer */
+}
+body {
+    background-color: #eee;
+    color: #444;
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 100px; /* Sticky footer height */
+}
+.home-link,
+.home-link:focus,
+.home-link:hover {
+    color: #444;
+}
+.sticky-footer {
+    background-color: #222;
+    bottom: 0;
+    height: 100px;
+    position: absolute;
+    width: 100%;
+}
+.footer-links {
+    margin-top: 15px;
+}
+.footer-links a {
+    color: #fff;
+}
+.footer-links a:hover,
+.footer-links a:focus,
+.footer-links a:active {
+    color: #337ab7;
+    text-decoration: none;
+}
+.footer-links a:not(:first-child) {
+    margin-left: 30px;
+}

@@ -10,7 +10,6 @@
 
     <title>{% block document_title %}strayharbor - a list of neat things I found on the internet{% endblock %}</title>
 
-    <link href="{{ url_for('static', filename='vendor/css/vendor.min.css') }}" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
     {% block css %}
     {% endblock %}
@@ -22,7 +21,8 @@
     {% endblock %}
     #}
   </head>
-  <body>
+  <!-- Hide the contents of the body until the client app finishes loading -->
+  <body style="display:none;background-color:#eee;">
     {% include 'includes/header.html' %}
 
     {% block content %}
@@ -30,9 +30,6 @@
 
     {% include 'includes/footer.html' %}
 
-    {#
-    <script src="{{ url_for('static', filename='vendor/js/vendor.min.js') }}"></script>
-    #}
     {% block js %}
     {% endblock %}
   </body>

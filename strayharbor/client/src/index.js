@@ -1,11 +1,23 @@
+// Third party libs
 import Vue from 'vue';
 import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
+
+// Third party CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'font-awesome/css/font-awesome.min.css';
+
+// Our libs
 import DateEntries from './date-entries.vue';
 
+// Our CSS
+import './common.css';
+
+// Load Vue plugins
 Vue.use(VueResource);
 Vue.use(VueRouter);
 
+// Initialize app and router
 let App = Vue.extend({});
 let router = new VueRouter({history: true});
 
@@ -15,6 +27,7 @@ router.beforeEach(function(transition) {
     transition.next();
 });
 
+// Routes
 router.map({
     '/': {
         name: 'all',
@@ -34,4 +47,9 @@ router.map({
     },
 });
 
+// Bind app to the document body
 router.start(App, 'body');
+
+// The document body is initially hidden while the app loads. Once it's loaded,
+// show the body.
+document.body.style.display = 'block';
