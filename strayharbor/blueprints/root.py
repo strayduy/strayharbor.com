@@ -56,24 +56,8 @@ def index(subreddit=None, page=1, year=None, month=None, day=None, slug=None):
     }
     return render_template('index.html', **template_vars)
 
-def subreddit(subreddit, page=1):
-    return render_template('subreddit.html', subreddit=subreddit)
-
-@blueprint.route('/posts/page/<int:page>/')
-def posts(page=1):
-    return render_template('posts.html')
-
-def post(year, month, day, slug):
-    return render_template('post.html')
-
-@blueprint.route('/posts/<int:year>/<int:month>/<int:day>/<slug>.json')
-def post_json(year, month, day, slug):
-    post = Post.from_date_slug(year, month, day, slug)
-    res = {'post': post.serialize()}
-    return jsonify(**res)
-
 @blueprint.route('/date-entries.json')
-def likes_json():
+def date_entries_json():
     only_posts = request.args.get('only_posts', '').lower() == 'true'
     single_post = request.args.get('single_post', '')
     subreddit = request.args.get('subreddit', '')
