@@ -24,6 +24,10 @@
             <span class="display-date">{{ display_date }}</span>
         </div>
 
+        <template v-for="post_data in posts">
+            <post-entry :post_data="post_data"></post-entry>
+        </template>
+
         <template v-for="upvote_data in upvotes">
             <upvote-entry :upvote_data="upvote_data"></upvote-entry>
         </template>
@@ -32,12 +36,14 @@
 
 <script>
 import moment from 'moment';
+import PostEntry from './post-entry.vue'
 import UpvoteEntry from './upvote-entry.vue'
 
 export default {
-    components: { UpvoteEntry },
+    components: { PostEntry, UpvoteEntry },
     props: [
         'date',
+        'posts',
         'upvotes',
     ],
     computed: {

@@ -45,6 +45,18 @@ router.map({
         name: 'subreddit_paginated',
         component: DateEntries,
     },
+    '/posts': {
+        name: 'posts',
+        component: DateEntries,
+    },
+    '/posts/page/:page': {
+        name: 'posts_paginated',
+        component: DateEntries,
+    },
+    '/posts/:year/:month/:day/:slug': {
+        name: 'single_post',
+        component: DateEntries,
+    },
 });
 
 // Bind app to the document body

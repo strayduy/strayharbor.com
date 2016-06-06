@@ -33,7 +33,9 @@ cache = ExpiringLRUCache(MAX_CACHE_ENTRIES, default_timeout=CACHE_TIMEOUT_IN_SEC
 @blueprint.route('/page/<int:page>')
 @blueprint.route('/r/<subreddit>')
 @blueprint.route('/r/<subreddit>/page/<int:page>')
-def index(subreddit=None, page=1):
+@blueprint.route('/posts')
+@blueprint.route('/posts/<int:year>/<int:month>/<int:day>/<slug>')
+def index(subreddit=None, page=1, year=None, month=None, day=None, slug=None):
     app_config = current_app.config
     env = app_config.get('APP_ENV', 'dev').lower()
     webpack_dev_server_hostname = app_config.get('WEBPACK_DEV_SERVER_HOSTNAME', '')
@@ -57,12 +59,10 @@ def index(subreddit=None, page=1):
 def subreddit(subreddit, page=1):
     return render_template('subreddit.html', subreddit=subreddit)
 
-@blueprint.route('/posts/')
 @blueprint.route('/posts/page/<int:page>/')
 def posts(page=1):
     return render_template('posts.html')
 
-@blueprint.route('/posts/<int:year>/<int:month>/<int:day>/<slug>')
 def post(year, month, day, slug):
     return render_template('post.html')
 
@@ -75,14 +75,28 @@ def post_json(year, month, day, slug):
 @blueprint.route('/date-entries.json')
 def likes_json():
     only_posts = request.args.get('only_posts', '').lower() == 'true'
+    single_post = request.args.get('single_post', '')
     subreddit = request.args.get('subreddit', '')
     page = int(request.args.get('page', 1))
 
-    cache_key = (only_posts, subreddit, page)
+    cache_key = (only_posts, single_post, subreddit, page)
     cache_entry = cache.get(cache_key)
 
     if cache_entry:
         res = cache_entry
+    elif single_post:
+        year, month, day, slug = single_post.split(' ')
+        post = Post.from_date_slug(year, month, day, slug)
+
+        res = {
+            'date_entries': [{
+                'date': '%s-%s-%s' % (year, month, day),
+                'posts': [post.serialize()],
+            }],
+            'max_pages': 1,
+        }
+
+        cache.put(cache_key, res)
     else:
         posts = [] if subreddit else [p for p in Post.get_all()]
         user = User.get_by_id(current_app.config['REDDIT_USERNAME'])
@@ -97,7 +111,7 @@ def likes_json():
 
         res = {
             'date_entries': date_entries,
-            'max_pages': max_pages
+            'max_pages': max_pages,
         }
 
         cache.put(cache_key, res)

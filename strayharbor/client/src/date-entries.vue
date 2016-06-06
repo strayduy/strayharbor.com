@@ -6,7 +6,7 @@
         <template v-for="date_entry in date_entries">
             <div class="row">
                 <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
-                    <date-entry :date="date_entry.date" :upvotes="date_entry.upvotes"></date-entry>
+                    <date-entry :date="date_entry.date" :posts="date_entry.posts" :upvotes="date_entry.upvotes"></date-entry>
                 </div>
             </div>
         </template>
@@ -74,6 +74,9 @@ export default {
             else if (current_route == 'subreddit' || current_route == 'subreddit_paginated') {
                 page_obj.name = 'subreddit_paginated';
             }
+            else if (current_route == 'posts' || current_route == 'posts_paginated') {
+                page_obj.name = 'posts_paginated';
+            }
 
             return page_obj;
         },
@@ -84,7 +87,7 @@ export default {
             return _.isNaN(page) ? 1 : page;
         },
         should_show_pagination: function() {
-            return this.max_pages > 0;
+            return this.max_pages > 1;
         },
         has_prev_page: function() {
             return this.current_page > 1;
@@ -101,18 +104,29 @@ export default {
     },
     route: {
         data: function() {
+            let params = this.$route.params;
             let filter = this.filter || {};
 
             // Pagination
-            let page = parseInt(this.$route.params.page);
+            let page = parseInt(params.page);
             if (page > 1) {
                 filter.page = page;
             }
 
             // Filter by subreddit
-            let subreddit = this.$route.params.subreddit;
+            let subreddit = params.subreddit;
             if (subreddit) {
                 filter.subreddit = subreddit;
+            }
+
+            // Filter by posts
+            if (this.$route.name === 'posts' || this.$route.name === 'posts_paginated') {
+                filter.only_posts = true;
+            }
+
+            // Retrieve a single post
+            if (this.$route.name === 'single_post') {
+                filter.single_post = `${params.year} ${params.month} ${params.day} ${params.slug}`;
             }
 
             return this.$http.get('/date-entries.json', filter).then(function success(response) {
