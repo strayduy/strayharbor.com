@@ -1,30 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64" href="{{ url_for('root.favicon', _external=True) }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64" href="{{ url_for('root.favicon', _external=True) }}">
 
-        <title>{% block document_title %}strayharbor - a list of neat things I found on the internet{% endblock %}</title>
+    <title>{% block document_title %}strayharbor - a list of neat things I found on the internet{% endblock %}</title>
 
-        <link href="{{ url_for('static', filename='vendor/css/vendor.min.css') }}" rel="stylesheet">
-        {% block css %}
-        {% endblock %}
+    <link href='http://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+    {% block css %}
+    {% endblock %}
 
-        {% block analytics_tracking %}
-            {% include 'includes/google-analytics-tracking.html' %}
-            {% include 'includes/hotjar-tracking.html' %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block content %}
-        {% endblock %}
+    {#
+    {% block analytics_tracking %}
+      {% include 'includes/google-analytics-tracking.html' %}
+      {% include 'includes/hotjar-tracking.html' %}
+    {% endblock %}
+    #}
+  </head>
+  <!-- Hide the contents of the body until the client app finishes loading -->
+  <body style="display:none;background-color:#eee;">
+    {% include 'includes/header.html' %}
 
-        <script src="{{ url_for('static', filename='vendor/js/vendor.min.js') }}"></script>
-        {% block js %}
-        {% endblock %}
-    </body>
+    {% block content %}
+    {% endblock %}
+
+    {% include 'includes/footer.html' %}
+
+    {% block js %}
+    {% endblock %}
+  </body>
 </html>

@@ -9,6 +9,7 @@ from flask import current_app
 from flask import jsonify
 from flask import render_template
 from flask import request
+from flask import url_for
 from repoze.lru import ExpiringLRUCache
 
 # Our libs
@@ -29,41 +30,57 @@ blueprint = Blueprint('root', __name__)
 cache = ExpiringLRUCache(MAX_CACHE_ENTRIES, default_timeout=CACHE_TIMEOUT_IN_SECONDS)
 
 @blueprint.route('/')
-@blueprint.route('/page/<int:page>/')
-def index(page=1):
-    return render_template('index.html')
-
-@blueprint.route('/r/<subreddit>/')
-@blueprint.route('/r/<subreddit>/page/<int:page>/')
-def subreddit(subreddit, page=1):
-    return render_template('subreddit.html', subreddit=subreddit)
-
-@blueprint.route('/posts/')
-@blueprint.route('/posts/page/<int:page>/')
-def posts(page=1):
-    return render_template('posts.html')
-
+@blueprint.route('/page/<int:page>')
+@blueprint.route('/r/<subreddit>')
+@blueprint.route('/r/<subreddit>/page/<int:page>')
+@blueprint.route('/posts')
 @blueprint.route('/posts/<int:year>/<int:month>/<int:day>/<slug>')
-def post(year, month, day, slug):
-    return render_template('post.html')
+def index(subreddit=None, page=1, year=None, month=None, day=None, slug=None):
+    app_config = current_app.config
+    env = app_config.get('APP_ENV', 'dev').lower()
+    webpack_dev_server_hostname = app_config.get('WEBPACK_DEV_SERVER_HOSTNAME', '')
 
-@blueprint.route('/posts/<int:year>/<int:month>/<int:day>/<slug>.json')
-def post_json(year, month, day, slug):
-    post = Post.from_date_slug(year, month, day, slug)
-    res = {'post': post.serialize()}
-    return jsonify(**res)
+    unminified_filename = 'app/js/index.bundle.js'
+    minified_filename = 'app/js/index.bundle.min.js'
+
+    if env == 'prod':
+        bundle_url = url_for('static', filename=minified_filename)
+    elif webpack_dev_server_hostname:
+        # Not using url_for to avoid creating a cachebusted URL
+        bundle_url = 'http://%s/static/%s' % (webpack_dev_server_hostname, unminified_filename)
+    else:
+        bundle_url = url_for('static', filename=unminified_filename)
+
+    template_vars = {
+        'bundle_url': bundle_url,
+    }
+    return render_template('index.html', **template_vars)
 
 @blueprint.route('/date-entries.json')
-def likes_json():
+def date_entries_json():
     only_posts = request.args.get('only_posts', '').lower() == 'true'
+    single_post = request.args.get('single_post', '')
     subreddit = request.args.get('subreddit', '')
     page = int(request.args.get('page', 1))
 
-    cache_key = (only_posts, subreddit, page)
+    cache_key = (only_posts, single_post, subreddit, page)
     cache_entry = cache.get(cache_key)
 
     if cache_entry:
         res = cache_entry
+    elif single_post:
+        year, month, day, slug = single_post.split(' ')
+        post = Post.from_date_slug(year, month, day, slug)
+
+        res = {
+            'date_entries': [{
+                'date': '%s-%s-%s' % (year, month, day),
+                'posts': [post.serialize()],
+            }],
+            'max_pages': 1,
+        }
+
+        cache.put(cache_key, res)
     else:
         posts = [] if subreddit else [p for p in Post.get_all()]
         user = User.get_by_id(current_app.config['REDDIT_USERNAME'])
@@ -78,7 +95,7 @@ def likes_json():
 
         res = {
             'date_entries': date_entries,
-            'max_pages': max_pages
+            'max_pages': max_pages,
         }
 
         cache.put(cache_key, res)
@@ -93,7 +110,7 @@ def group_posts_and_likes_by_date(likes, posts, offset=0, limit=ENTRIES_PER_PAGE
         if isinstance(obj, Post):
             type_key = 'posts'
         elif isinstance(obj, Upvote):
-            type_key = 'likes'
+            type_key = 'upvotes'
         else:
             continue
 

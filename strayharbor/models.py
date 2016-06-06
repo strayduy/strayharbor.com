@@ -173,7 +173,7 @@ class Post(object):
 
     @classmethod
     def from_date_slug(cls, year, month, day, slug):
-        filepath = '%04d-%02d-%02d-%s.md' % (year, month, day, slug)
+        filepath = '%04d-%02d-%02d-%s.md' % (int(year), int(month), int(day), slug)
         #filepath = os.path.join(cls.POSTS_DIR, basename)
         return cls.from_filepath(filepath)
 
