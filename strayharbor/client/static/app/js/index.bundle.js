@@ -14752,31 +14752,31 @@
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "f4769f9bdb7466be65088239c12046d1.eot";
+	module.exports = __webpack_require__.p + "./glyphicons-halflings-regular.eot";
 
 /***/ },
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "448c34a56d699c29117adc64c43affeb.woff2";
+	module.exports = __webpack_require__.p + "./glyphicons-halflings-regular.woff2";
 
 /***/ },
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "fa2772327f55d8198301fdb8bcfc8158.woff";
+	module.exports = __webpack_require__.p + "./glyphicons-halflings-regular.woff";
 
 /***/ },
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "e18bbf611f2a2e43afc071aa2f4e1512.ttf";
+	module.exports = __webpack_require__.p + "./glyphicons-halflings-regular.ttf";
 
 /***/ },
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "89889688147bd7575d6327160d64e760.svg";
+	module.exports = __webpack_require__.p + "./glyphicons-halflings-regular.svg";
 
 /***/ },
 /* 14 */
@@ -15074,37 +15074,37 @@
 /* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "25a32416abee198dd821b0b17a198a8f.eot";
+	module.exports = __webpack_require__.p + "./fontawesome-webfont.eot";
 
 /***/ },
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "25a32416abee198dd821b0b17a198a8f.eot";
+	module.exports = __webpack_require__.p + "./fontawesome-webfont.eot";
 
 /***/ },
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "e6cf7c6ec7c2d6f670ae9d762604cb0b.woff2";
+	module.exports = __webpack_require__.p + "./fontawesome-webfont.woff2";
 
 /***/ },
 /* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "c8ddf1e5e5bf3682bc7bebf30f394148.woff";
+	module.exports = __webpack_require__.p + "./fontawesome-webfont.woff";
 
 /***/ },
 /* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "1dc35d25e61d819a9c357074014867ab.ttf";
+	module.exports = __webpack_require__.p + "./fontawesome-webfont.ttf";
 
 /***/ },
 /* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "d7c639084f684d66a1bc66855d193ed8.svg";
+	module.exports = __webpack_require__.p + "./fontawesome-webfont.svg";
 
 /***/ },
 /* 23 */

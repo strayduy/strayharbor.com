@@ -7,8 +7,17 @@ var config = {
     entry: ['./src/index.js'],
     output: {
         path: path.join(__dirname, 'static/app/js'),
-        filename: 'index.bundle.js',
+        publicPath: '/static/app/js/',
+        filename: 'index.bundle.min.js',
     },
+    plugins: [
+        new webpack.optimize.UglifyJsPlugin({
+            compressor: {
+                warnings: false,
+            },
+        }),
+        new webpack.optimize.OccurenceOrderPlugin(),
+    ],
     module: {
         loaders: [
             {
@@ -31,25 +40,16 @@ var config = {
             },
             {
                 test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
-                loader: 'file-loader',
+                loader: 'file?name=./[name].[ext]',
             },
         ],
     },
 };
 
-if (NODE_ENV && NODE_ENV.toLowerCase() === 'production') {
-    config.output.filename = 'index.bundle.min.js';
-    config.plugins = [
-        new webpack.optimize.UglifyJsPlugin({
-            compressor: {
-                warnings: false,
-            },
-        }),
-        new webpack.optimize.OccurenceOrderPlugin(),
-    ];
-}
-else {
+if (!NODE_ENV || NODE_ENV.toLowerCase() !== 'production') {
     config.output.publicPath = 'http://localhost:8080/static/app/js/';
+    config.output.filename = 'index.bundle.js';
+    config.plugins = [];
 }
 
 module.exports = config;
