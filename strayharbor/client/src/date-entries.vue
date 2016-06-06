@@ -3,44 +3,46 @@
         <div class="text-center">Loading...</div>
     </template>
     <template v-else>
-        <template v-for="date_entry in date_entries">
-            <div class="row">
-                <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
-                    <date-entry :date="date_entry.date" :posts="date_entry.posts" :upvotes="date_entry.upvotes"></date-entry>
+        <div class="container">
+            <template v-for="date_entry in date_entries">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                        <date-entry :date="date_entry.date" :posts="date_entry.posts" :upvotes="date_entry.upvotes"></date-entry>
+                    </div>
                 </div>
-            </div>
-        </template>
+            </template>
 
-        <template v-if="should_show_pagination">
-            <div class="row">
-                <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
-                    <nav>
-                        <ul class="pager">
-                            <li class="previous disabled" v-show="!has_prev_page">
-                                <a>
-                                    <span aria-hidden="true">&larr;</span> Newer
-                                </a>
-                            </li>
-                            <li class="previous" v-show="has_prev_page">
-                                <a v-link="prev_page">
-                                    <span aria-hidden="true">&larr;</span> Newer
-                                </a>
-                            </li>
-                            <li class="next" v-show="has_next_page">
-                                <a v-link="next_page">
-                                    Older <span aria-hidden="true">&rarr;</span>
-                                </a>
-                            </li>
-                            <li class="next disabled" v-show="!has_next_page">
-                                <a>
-                                    Older <span aria-hidden="true">&rarr;</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+            <template v-if="should_show_pagination">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                        <nav>
+                            <ul class="pager">
+                                <li class="previous disabled" v-show="!has_prev_page">
+                                    <a>
+                                        <span aria-hidden="true">&larr;</span> Newer
+                                    </a>
+                                </li>
+                                <li class="previous" v-show="has_prev_page">
+                                    <a v-link="prev_page">
+                                        <span aria-hidden="true">&larr;</span> Newer
+                                    </a>
+                                </li>
+                                <li class="next" v-show="has_next_page">
+                                    <a v-link="next_page">
+                                        Older <span aria-hidden="true">&rarr;</span>
+                                    </a>
+                                </li>
+                                <li class="next disabled" v-show="!has_next_page">
+                                    <a>
+                                        Older <span aria-hidden="true">&rarr;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
-            </div>
-        </template>
+            </template>
+        </div>
     </template>
 </template>
 
