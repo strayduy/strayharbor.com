@@ -58,7 +58,7 @@
                     </a>
                     <div class="bottom-links">
                         <div class="pull-left">
-                            <a class="upvote-comments" :href="upvote_data.permalink">
+                            <a class="upvote-comments" :href="comments_url">
                                 {{ comments_text }}
                             </a>
                         </div>
@@ -97,6 +97,9 @@ export default {
         },
         comments_text: function() {
             return this.upvote_data.num_comments + ' comments';
+        },
+        comments_url: function() {
+            return 'https://www.reddit.com' + this.upvote_data.permalink;
         },
         subreddit_text: function() {
             return '/r/' + this.upvote_data.subreddit;

@@ -45964,6 +45964,9 @@
 	        comments_text: function comments_text() {
 	            return this.upvote_data.num_comments + ' comments';
 	        },
+	        comments_url: function comments_url() {
+	            return 'https://www.reddit.com' + this.upvote_data.permalink;
+	        },
 	        subreddit_text: function subreddit_text() {
 	            return '/r/' + this.upvote_data.subreddit;
 	        },
@@ -46420,7 +46423,7 @@
 /* 144 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"upvote-entry panel panel-default\">\n    <div class=\"panel-body\">\n        <div class=\"media\">\n            <template v-if=\"has_thumbnail\">\n                <div class=\"media-left\">\n                    <a :href=\"upvote_data.url\">\n                        <img :src=\"upvote_data.thumbnail\">\n                    </a>\n                </div>\n            </template>\n            <div class=\"media-body\">\n                <a class=\"upvote-title\" :href=\"upvote_data.url\">\n                    {{ upvote_data.title }}\n                </a>\n                <div class=\"bottom-links\">\n                    <div class=\"pull-left\">\n                        <a class=\"upvote-comments\" :href=\"upvote_data.permalink\">\n                            {{ comments_text }}\n                        </a>\n                    </div>\n                    <div class=\"pull-right text-right\">\n                        <a class=\"upvote-subreddit\" v-link=\"{path: subreddit_url}\" :style=\"{backgroundColor: subreddit_bg_color, color: subreddit_text_color}\">\n                            {{ subreddit_text }}\n                        </a>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"upvote-entry panel panel-default\">\n    <div class=\"panel-body\">\n        <div class=\"media\">\n            <template v-if=\"has_thumbnail\">\n                <div class=\"media-left\">\n                    <a :href=\"upvote_data.url\">\n                        <img :src=\"upvote_data.thumbnail\">\n                    </a>\n                </div>\n            </template>\n            <div class=\"media-body\">\n                <a class=\"upvote-title\" :href=\"upvote_data.url\">\n                    {{ upvote_data.title }}\n                </a>\n                <div class=\"bottom-links\">\n                    <div class=\"pull-left\">\n                        <a class=\"upvote-comments\" :href=\"comments_url\">\n                            {{ comments_text }}\n                        </a>\n                    </div>\n                    <div class=\"pull-right text-right\">\n                        <a class=\"upvote-subreddit\" v-link=\"{path: subreddit_url}\" :style=\"{backgroundColor: subreddit_bg_color, color: subreddit_text_color}\">\n                            {{ subreddit_text }}\n                        </a>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n";
 
 /***/ },
 /* 145 */
