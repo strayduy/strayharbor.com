@@ -15,6 +15,8 @@ class ProdConfig(Config):
     USER_DB_USER = os.getenv('USER_DB_USER', '')
     USER_DB_PASSWORD = os.getenv('USER_DB_PASSWORD', '')
 
+    MINIFY_PAGE = True
+
 class DevConfig(Config):
     APP_ENV = 'dev'
 

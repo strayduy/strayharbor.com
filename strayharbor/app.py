@@ -2,6 +2,7 @@
 from flask import Flask
 from flask.ext import cache_bust
 from flask.ext.compress import Compress
+from flask.ext.htmlmin import HTMLMIN
 
 # Our libs
 from .blueprints import root
@@ -28,6 +29,7 @@ def register_extensions(app):
     cache_bust.init_cache_busting(app)
 
     Compress(app)
+    HTMLMIN(app)
 
 def register_blueprints(app):
     app.register_blueprint(root.blueprint)
